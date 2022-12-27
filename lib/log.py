@@ -1,9 +1,10 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
 from datetime import datetime
 import colorama
 
 
-class log(BaseModel):
+@dataclass
+class log():
     ''' log data model '''
 
     date: datetime

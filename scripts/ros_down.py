@@ -42,10 +42,6 @@ ros_nodes_map: dict = settings_obj['ros']['nodes']
 nodes_to_check: list[str] = []
 
 for machine_name in ros_nodes_map.keys():
-    # skip monitor TCU machine because it should start manually
-    if machine_name == 'monitor_tcu':
-        continue
-
     machine_ip = settings_obj['networking'][machine_name]
     machine_ssh_username = settings_obj['security'][machine_name]['username']
     machine_ssh_password = settings_obj['security'][machine_name]['password']
@@ -59,5 +55,5 @@ for machine_name in ros_nodes_map.keys():
 log_util.print_log(MODULE_ID, 'INFO', 'slave ROS nodes stopped')
 
 log_util.print_log(MODULE_ID, 'INFO', 'shutting down ROS master')
-os.system('docker-compose down')
+os.system('docker compose down')
 log_util.print_log(MODULE_ID, 'INFO', 'finished shutting down ROS master')

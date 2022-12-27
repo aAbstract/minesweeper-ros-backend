@@ -1,13 +1,14 @@
 import rospy
 import std_msgs.msg as ros_std_msgs
 import sys
+import json
 
 import lib.ros as ros_util
 import lib.settings as settings_util
 
 
 # module config
-_NODE_NAME = 'example_output_raspi_node'
+_NODE_NAME = 'example_sensors_node'
 
 # module state
 _temp_pub: rospy.Publisher = None
@@ -25,7 +26,7 @@ def ros_node_setup():
 
     _settings_obj = settings_util.get_settings()
 
-    topic_id = ros_util.create_topic_id('example_raspi_topic')
+    topic_id = ros_util.create_topic_id('example_sensors_topic')
     q_size: int = _settings_obj['ros']['msg_queue_size']
 
     _temp_pub = rospy.Publisher(
@@ -33,4 +34,12 @@ def ros_node_setup():
 
 
 def ros_node_loop():
-    _temp_pub.publish('example raspi output')
+    example_sensors_reading = {
+        'sensors_cluster_1': {
+            'sensor_1': 10,
+            'sensor_2': 20,
+            'sensor_3': 30,
+        },
+    }
+
+    _temp_pub.publish(json.dumps(example_sensors_reading))

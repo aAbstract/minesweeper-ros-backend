@@ -33,8 +33,8 @@ raspi_ssh_username = settings_obj['security']['raspi']['username']
 raspi_ssh_pass = settings_obj['security']['raspi']['password']
 
 os.system(
-    f'sshpass -p "{raspi_ssh_pass}" ssh {raspi_ssh_username}@{raspi_ip} "rm -r ~/rov/ros"')
+    f'sshpass -p "{raspi_ssh_pass}" ssh {raspi_ssh_username}@{raspi_ip} "rm -r ~/z_ros_aquila/ros"')
 os.system(
-    f'sshpass -p "{raspi_ssh_pass}" rsync -a --progress ../ros {raspi_ssh_username}@{raspi_ip}:~/rov/')
+    f'sshpass -p "{raspi_ssh_pass}" rsync -a --progress ../ros {raspi_ssh_username}@{raspi_ip}:~/z_ros_aquila/')
 
 log_util.print_log(MODULE_ID, 'DEBUG', "done uploading ROS codebase")

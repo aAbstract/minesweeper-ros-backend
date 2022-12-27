@@ -1,7 +1,7 @@
 # Minesweeper ROS Backend
 
 ## Description
-- ROS backend for the minesweeper robot developed by (Zewail City Minesweepers 23) SC team.
+- ROS backend for the minesweeper robot developed by Zewail City Aquila 23 SC team.
 
 ## How to Run
 ```
@@ -14,7 +14,6 @@
 python3.10+
 docker
 rospy
-pydantic
 ```
 
 ## Provided Libraries

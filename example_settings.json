@@ -1,20 +1,14 @@
 {
     "networking": {
-        "main_tcu": "192.168.122.1",
-        "raspi": "192.168.122.16",
-        "monitor_tcu": "192.168.122.1"
+        "main_cu": "192.168.122.1",
+        "raspi": "192.168.122.206"
     },
     "ros": {
         "msg_queue_size": 10,
         "nodes": {
-            "main_tcu": [
-                "example_input_tcu_node"
-            ],
-            "monitor_tcu": [
-                "logging_node"
-            ],
+            "main_cu": [],
             "raspi": [
-                "example_output_raspi_node"
+                "example_sensors_node"
             ]
         }
     },
@@ -27,7 +21,7 @@
         ]
     },
     "security": {
-        "main_tcu": {
+        "main_cu": {
             "username": "machine_ssh_username",
             "password": "machine_ssh_password"
         },

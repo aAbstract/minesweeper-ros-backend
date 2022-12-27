@@ -75,7 +75,7 @@ def init_node(node_name: str) -> bool:
     log_util.print_log(func_id, 'INFO', f"initializing ROS node: {node_name}")
 
     # setup ROS master URI
-    os.environ['ROS_MASTER_URI'] = f"http://{_settings_obj['networking']['main_tcu']}:11311/"
+    os.environ['ROS_MASTER_URI'] = f"http://{_settings_obj['networking']['main_cu']}:11311/"
     os.environ['ROS_IP'] = _settings_obj['networking'][machine_name]
 
     # init ros node

@@ -36,7 +36,7 @@ log_util.print_log(MODULE_ID, 'INFO',
 
 # start ros master node
 log_util.print_log(MODULE_ID, 'INFO', 'starting ROS master node')
-os.system('docker-compose up -d')
+os.system('docker compose up -d')
 # wait until ros master boots up
 time.sleep(2)
 log_util.print_log(MODULE_ID, 'INFO', 'finished starting ROS master node')
@@ -49,7 +49,7 @@ nodes_to_check: list[str] = ['/rosout']
 
 for machine_name in ros_nodes_map.keys():
     # skip monitor TCU machine because it should start manually
-    if machine_name == 'monitor_tcu':
+    if machine_name in settings_obj['ros']['ignore_machines']:
         continue
 
     machine_ip = settings_obj['networking'][machine_name]
@@ -62,7 +62,7 @@ for machine_name in ros_nodes_map.keys():
 
         nodes_to_check.append(f"/{node_name}")
 
-        launch_cmd = f'sshpass -p "{machine_ssh_password}" ssh -f {machine_ssh_username}@{machine_ip} "cd ~/rov/ros && (python3 ./ros_nodes/{node_name}/bootstrap.py > /dev/null 2>&1 &) && exit"'
+        launch_cmd = f'sshpass -p "{machine_ssh_password}" ssh -f {machine_ssh_username}@{machine_ip} "cd ~/z_ros_aquila/ros && (python3 ./ros_nodes/{node_name}/bootstrap.py > /dev/null 2>&1 &) && exit"'
         os.system(launch_cmd)
         time.sleep(1)
 
@@ -71,10 +71,10 @@ log_util.print_log(MODULE_ID, 'INFO', 'done starting slave ROS nodes')
 # ros launch validation
 log_util.print_log(MODULE_ID, 'INFO', 'starting ROS validation routine')
 
-main_tcu_ip = settings_obj['networking']['main_tcu']
-main_tcu_ssh_username = settings_obj['security']['main_tcu']['username']
-main_tcu_ssh_pass = settings_obj['security']['main_tcu']['password']
-validation_cmd = f'sshpass -p "{main_tcu_ssh_pass}" ssh {main_tcu_ssh_username}@{main_tcu_ip} "docker exec rov_ros_1 /bin/bash -c \\"source /ros_entrypoint.sh && rosnode list\\""'
+main_cu_ip = settings_obj['networking']['main_cu']
+main_cu_ssh_username = settings_obj['security']['main_cu']['username']
+main_cu_ssh_pass = settings_obj['security']['main_cu']['password']
+validation_cmd = f'sshpass -p "{main_cu_ssh_pass}" ssh {main_cu_ssh_username}@{main_cu_ip} "docker exec z_ros_aquila-ros-1 /bin/bash -c \\"source /ros_entrypoint.sh && rosnode list\\""'
 
 sub_process = subprocess.Popen(
     validation_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
@@ -83,12 +83,17 @@ output = stdout.decode()
 active_nodes_list = output.split()
 
 # format active nodes
-for i in range(len(active_nodes_list)):
-    if active_nodes_list[i] == '/rosout':
-        continue
+try:
+    for i in range(len(active_nodes_list)):
+        if active_nodes_list[i] == '/rosout':
+            continue
 
-    active_nodes_list[i] = re.findall(
-        '\/[a-z_]+', active_nodes_list[i])[0][:-1]
+        active_nodes_list[i] = re.findall(
+            '\/[a-z_]+', active_nodes_list[i])[0][:-1]
+
+except:
+    log_util.print_log(MODULE_ID, 'ERROR',
+                       f"error reading active ROS nodes: {output}")
 
 if set(nodes_to_check) == set(active_nodes_list):
     log_util.print_log(MODULE_ID, 'INFO', 'ROS validation routine succeed')
