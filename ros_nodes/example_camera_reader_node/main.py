@@ -36,7 +36,7 @@ def ros_node_setup():
         sys.exit()
 
     topic_id = ros_util.compute_topic_id(
-        'example_camera_adapter_node', 'camera_feed')
+        'camera_adapter_node', 'camera_feed')
 
     rospy.Subscriber(topic_id, ros_std_msgs.String, _example_ros_frame_reader)
 

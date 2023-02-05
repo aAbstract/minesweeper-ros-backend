@@ -10,7 +10,7 @@ import lib.settings as settings_util
 
 
 # module config
-_NODE_NAME = 'example_camera_adapter_node'
+_NODE_NAME = 'camera_adapter_node'
 
 # module state
 _camera_adapter = cv2.VideoCapture(0)
@@ -39,7 +39,7 @@ def ros_node_setup():
 def ros_node_loop():
     # read frame
     _, frame = _camera_adapter.read()
-    frame = cv2.resize(frame, (500, 500))
+    frame = cv2.resize(frame, (400, 400))
 
     # compress frame
     _, compressed_frame = cv2.imencode(
