@@ -7,7 +7,7 @@ import os
 sys.path.append(os.getcwd())
 
 # change this
-import ros_nodes.example_camera_reader_node.main as example_camera_reader_node
+import ros_nodes.serial_interface_node.main as serial_interface_node
 # autopep8: on
 
 
@@ -17,7 +17,7 @@ _NODE_DELAY = 0.01  # 10ms delay / operation frequency 100Hz
 
 if __name__ == '__main__':
     # change this
-    example_camera_reader_node.ros_node_setup()
+    serial_interface_node.ros_node_setup()
 
     while True:
         if rospy.is_shutdown():
@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
         try:
             # change this
-            example_camera_reader_node.ros_node_loop()
+            serial_interface_node.ros_node_loop()
 
         except rospy.ROSInterruptException:
             break

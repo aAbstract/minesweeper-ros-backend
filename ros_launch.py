@@ -4,51 +4,51 @@ import subprocess
 import time
 import re
 
-import lib.log as log_util
-import lib.settings as settings_util
+import lib.log as log_man
+import lib.settings as set_man
 
 
 MODULE_ID = 'ros_launch'
 
-settings_obj = settings_util.get_settings()
+settings_obj = set_man.get_settings()
 
 # validate network configs
 network_config: dict[str, str] = settings_obj['networking']
 
-log_util.print_log(MODULE_ID, 'INFO', 'checking network configs')
+log_man.print_log(MODULE_ID, 'INFO', 'checking network configs')
 
 for machine_name, machine_ip in network_config.items():
     if machine_ip in ['', '127.0.0.1']:
         continue
 
-    log_util.print_log(MODULE_ID, 'DEBUG',
+    log_man.print_log(MODULE_ID, 'DEBUG',
                        f"checking host {machine_name} with IP {machine_ip}")
 
     proc_exit_code = os.system(f"ping -4 -c 1 {machine_ip}")
 
     if proc_exit_code != 0:
-        log_util.print_log(
+        log_man.print_log(
             MODULE_ID, 'ERROR', f"host {machine_name} with IP {machine_ip} is offline")
         sys.exit()
 
-log_util.print_log(MODULE_ID, 'INFO',
+log_man.print_log(MODULE_ID, 'INFO',
                    'finished scanning machines, all machines are online')
 
 # start ros master node
-log_util.print_log(MODULE_ID, 'INFO', 'starting ROS master node')
+log_man.print_log(MODULE_ID, 'INFO', 'starting ROS master node')
 os.system('docker compose up -d')
 # wait until ros master boots up
 time.sleep(2)
-log_util.print_log(MODULE_ID, 'INFO', 'finished starting ROS master node')
+log_man.print_log(MODULE_ID, 'INFO', 'finished starting ROS master node')
 
 # start slave ros nodes
-log_util.print_log(MODULE_ID, 'INFO', 'starting slave ROS nodes')
+log_man.print_log(MODULE_ID, 'INFO', 'starting slave ROS nodes')
 
 ros_nodes_map: dict = settings_obj['ros']['nodes']
 nodes_to_check: list[str] = ['/rosout']
 
 for machine_name in ros_nodes_map.keys():
-    # skip monitor TCU machine because it should start manually
+    # skip manual machines
     if machine_name in settings_obj['ros']['ignore_machines']:
         continue
 
@@ -57,7 +57,11 @@ for machine_name in ros_nodes_map.keys():
     machine_ssh_password = settings_obj['security'][machine_name]['password']
 
     for node_name in ros_nodes_map[machine_name]:
-        log_util.print_log(
+        # skip ignored nodes
+        if node_name in settings_obj['ros']['ignore_nodes']:
+            continue
+
+        log_man.print_log(
             MODULE_ID, 'INFO', f"starting nodes: ({machine_name}|{machine_ip}).{node_name}")
 
         nodes_to_check.append(f"/{node_name}")
@@ -66,10 +70,10 @@ for machine_name in ros_nodes_map.keys():
         os.system(launch_cmd)
         time.sleep(1)
 
-log_util.print_log(MODULE_ID, 'INFO', 'done starting slave ROS nodes')
+log_man.print_log(MODULE_ID, 'INFO', 'done starting slave ROS nodes')
 
 # ros launch validation
-log_util.print_log(MODULE_ID, 'INFO', 'starting ROS validation routine')
+log_man.print_log(MODULE_ID, 'INFO', 'starting ROS validation routine')
 
 main_cu_ip = settings_obj['networking']['main_cu']
 main_cu_ssh_username = settings_obj['security']['main_cu']['username']
@@ -92,14 +96,14 @@ try:
             '\/[a-z_]+', active_nodes_list[i])[0][:-1]
 
 except:
-    log_util.print_log(MODULE_ID, 'ERROR',
+    log_man.print_log(MODULE_ID, 'ERROR',
                        f"error reading active ROS nodes: {output}")
 
 if set(nodes_to_check) == set(active_nodes_list):
-    log_util.print_log(MODULE_ID, 'INFO', 'ROS validation routine succeed')
+    log_man.print_log(MODULE_ID, 'INFO', 'ROS validation routine succeed')
 
 else:
-    log_util.print_log(MODULE_ID, 'ERROR', 'ROS validation routine faild')
+    log_man.print_log(MODULE_ID, 'ERROR', 'ROS validation routine faild')
     print('nodes_to_check:')
     print(nodes_to_check)
     print('active_nodes')

@@ -2,8 +2,8 @@ import os
 import rospy
 from datetime import datetime
 
-import lib.settings as settings_util
-import lib.log as log_util
+import lib.settings as set_man
+import lib.log as log_man
 
 
 # module state
@@ -40,14 +40,14 @@ def ros_log(mod_id: str, level: str, desc: str):
 
     if level in allowed_logs_levels:
         
-        temp_log_obj = log_util.log(
+        temp_log_obj = log_man.log(
             date=datetime.now(),
             level=level,
             mod_id=mod_id,
             description=desc
         )
 
-        formated_log = log_util.format_log(temp_log_obj)
+        formated_log = log_man.format_log(temp_log_obj)
 
         # publish ros log
         rospy.loginfo(formated_log)
@@ -63,16 +63,16 @@ def init_node(node_name: str) -> bool:
 
     func_id = f"{_module_id}.init_node"
 
-    _settings_obj = settings_util.get_settings()
+    _settings_obj = set_man.get_settings()
 
     machine_name = _get_node_machine_name()
 
     if machine_name == '':
-        log_util.print_log(func_id, 'ERROR',
+        log_man.print_log(func_id, 'ERROR',
                            f"attempt to initialize a non configured ROS node: {node_name}")
         return False
 
-    log_util.print_log(func_id, 'INFO', f"initializing ROS node: {node_name}")
+    log_man.print_log(func_id, 'INFO', f"initializing ROS node: {node_name}")
 
     # setup ROS master URI
     os.environ['ROS_MASTER_URI'] = f"http://{_settings_obj['networking']['main_cu']}:11311/"
@@ -81,12 +81,12 @@ def init_node(node_name: str) -> bool:
     # init ros node
     try:
         rospy.init_node(node_name, anonymous=True)
-        log_util.print_log(
+        log_man.print_log(
             func_id, 'INFO', f"done initializing ROS node: {node_name}")
         ros_log(func_id, 'INFO', f"done initializing ROS node: {node_name}")
         return True
 
     except Exception as err:
         err_msg = f"error initializing ROS node: {node_name}: {err}"
-        log_util.print_log(func_id, 'ERROR', err_msg)
+        log_man.print_log(func_id, 'ERROR', err_msg)
         return False

@@ -14,6 +14,7 @@
 python3.10+
 docker
 rospy
+pygame
 ```
 
 ## Provided Libraries

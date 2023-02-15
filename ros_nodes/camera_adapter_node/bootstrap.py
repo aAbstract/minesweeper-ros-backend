@@ -12,7 +12,7 @@ import ros_nodes.camera_adapter_node.main as camera_adapter_node
 
 
 # change this
-_NODE_DELAY = 0.01  # 10ms delay / operation frequency 100Hz
+_NODE_DELAY = 0.05  # 50ms delay / operation frequency 20Hz
 
 
 if __name__ == '__main__':

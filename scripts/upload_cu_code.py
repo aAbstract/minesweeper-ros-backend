@@ -4,30 +4,30 @@ import sys
 
 sys.path.append(os.getcwd())
 
-import lib.log as log_util
-import lib.settings as settings_util
+import lib.log as log_man
+import lib.settings as set_man
 # autopep8: on
 
 
 MODULE_ID = 'upload_main_cu_code'
 
-settings_obj = settings_util.get_settings()
+settings_obj = set_man.get_settings()
 main_cu_ip = settings_obj['networking']['main_cu']
 
 
 # check if raspi is online
-log_util.print_log(MODULE_ID, 'DEBUG',
+log_man.print_log(MODULE_ID, 'DEBUG',
                    f"checking control unit machine with ip: {main_cu_ip}")
 proc_exit_code = os.system(f"ping -4 -c 1 {main_cu_ip}")
 
 if proc_exit_code != 0:
-    log_util.print_log(MODULE_ID, 'ERROR', f"main_cu / ip:{main_cu_ip} is offline")
+    log_man.print_log(MODULE_ID, 'ERROR', f"main_cu / ip:{main_cu_ip} is offline")
     sys.exit()
 
-log_util.print_log(MODULE_ID, 'DEBUG', f"main_cu / ip:{main_cu_ip} is online")
+log_man.print_log(MODULE_ID, 'DEBUG', f"main_cu / ip:{main_cu_ip} is online")
 
 # upload ros codebase
-log_util.print_log(MODULE_ID, 'DEBUG', "uploading ROS codebase")
+log_man.print_log(MODULE_ID, 'DEBUG', "uploading ROS codebase")
 
 main_cu_ssh_username = settings_obj['security']['main_cu']['username']
 main_cu_ssh_pass = settings_obj['security']['main_cu']['password']
@@ -37,4 +37,4 @@ os.system(
 os.system(
     f'sshpass -p "{main_cu_ssh_pass}" rsync -a --progress ../ros {main_cu_ssh_username}@{main_cu_ip}:~/z_ros_aquila/')
 
-log_util.print_log(MODULE_ID, 'DEBUG', "done uploading ROS codebase")
+log_man.print_log(MODULE_ID, 'DEBUG', "done uploading ROS codebase")

@@ -6,11 +6,13 @@
     "ros": {
         "msg_queue_size": 10,
         "nodes": {
-            "main_cu": [],
-            "raspi": [
-                "example_sensors_node"
-            ]
-        }
+            "main_cu": [
+                "camera_adapter_node"
+            ],
+            "raspi": []
+        },
+        "ignore_machines": [],
+        "ignore_nodes": []
     },
     "system": {
         "debug": true,

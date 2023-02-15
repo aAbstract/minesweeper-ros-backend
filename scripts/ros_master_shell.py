@@ -4,11 +4,11 @@ import sys
 
 sys.path.append(os.getcwd())
 
-import lib.settings as settings_util
+import lib.settings as set_man
 # autopep8: on
 
 
-settings_obj = settings_util.get_settings()
+settings_obj = set_man.get_settings()
 main_cu_ip = settings_obj['networking']['main_cu']
 main_cu_ssh_username = settings_obj['security']['main_cu']['username']
 main_cu_ssh_pass = settings_obj['security']['main_cu']['password']

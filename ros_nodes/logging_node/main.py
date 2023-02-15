@@ -2,7 +2,7 @@ import rospy
 import rosgraph_msgs.msg as ros_graph_msgs
 import sys
 
-import lib.ros as ros_util
+import lib.ros as ros_man
 
 
 # module config
@@ -15,7 +15,7 @@ def _log_read_handler(log: ros_graph_msgs.Log):
 
 
 def ros_node_setup():
-    is_init = ros_util.init_node(_NODE_NAME)
+    is_init = ros_man.init_node(_NODE_NAME)
     
     if not is_init:
         sys.exit()

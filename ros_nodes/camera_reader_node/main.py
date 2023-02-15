@@ -5,15 +5,15 @@ import cv2
 import base64
 import pickle
 
-import lib.ros as ros_util
+import lib.ros as ros_man
 
 
 # module config
-_NODE_NAME = 'example_camera_reader_node'
+_NODE_NAME = 'camera_reader_node'
 
 
 # ros msgs handlers
-def _example_ros_frame_reader(msg: ros_std_msgs.String):
+def _ros_frame_reader(msg: ros_std_msgs.String):
     input_bin_stream = msg.data.encode()
 
     # base64 decode
@@ -30,15 +30,15 @@ def _example_ros_frame_reader(msg: ros_std_msgs.String):
 
 
 def ros_node_setup():
-    is_init = ros_util.init_node(_NODE_NAME)
+    is_init = ros_man.init_node(_NODE_NAME)
 
     if not is_init:
         sys.exit()
 
-    topic_id = ros_util.compute_topic_id(
+    topic_id = ros_man.compute_topic_id(
         'camera_adapter_node', 'camera_feed')
 
-    rospy.Subscriber(topic_id, ros_std_msgs.String, _example_ros_frame_reader)
+    rospy.Subscriber(topic_id, ros_std_msgs.String, _ros_frame_reader)
 
 
 def ros_node_loop():
